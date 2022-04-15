@@ -1,0 +1,76 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://scenes/Hurtbox.tscn" type="PackedScene" id=1]
+[ext_resource path="res://sprites/slime.png" type="Texture" id=2]
+[ext_resource path="res://scenes/Slime.gd" type="Script" id=3]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 6.0
+height = 6.0
+
+[sub_resource type="Animation" id=2]
+resource_name = "Idle"
+length = 0.7
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3 ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "Idle"
+
+[sub_resource type="AnimationNodeStateMachine" id=3]
+states/Idle/node = SubResource( 5 )
+states/Idle/position = Vector2( 317, 88 )
+start_node = "Idle"
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=4]
+
+[sub_resource type="CapsuleShape2D" id=6]
+radius = 4.0
+height = 8.0
+
+[node name="Slime" type="KinematicBody2D"]
+collision_layer = 16
+collision_mask = 3
+script = ExtResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+hframes = 7
+vframes = 5
+
+[node name="Hurtbox" parent="." instance=ExtResource( 1 )]
+collision_layer = 8
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2( 0, 2 )
+rotation = 1.5708
+shape = SubResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Idle = SubResource( 2 )
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 3 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/playback = SubResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 3 )
+rotation = 1.5708
+shape = SubResource( 6 )
+
+[connection signal="area_entered" from="Hurtbox" to="." method="_on_Hurtbox_area_entered"]
+
+[editable path="Hurtbox"]

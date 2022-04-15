@@ -3,6 +3,7 @@ extends KinematicBody2D
 onready var animation: AnimationPlayer = $AnimationPlayer
 onready var animationTree: AnimationTree = $AnimationTree
 onready var animationState: AnimationNodeStateMachinePlayback = animationTree.get("parameters/playback")
+onready var swordHitbox: Area2D = $SwordHitboxPivot/SwordHitbox
 onready var hero: Sprite = $Sprite
 
 enum {
@@ -45,6 +46,9 @@ func attack_animation_finished():
 	
 func move_state():
 	get_input()
+	
+	if (velocity != Vector2()):
+		swordHitbox.hitboxOriginPosition = global_position
 	
 	if (velocity.x != 0):
 		animationTree.set("parameters/Idle/blend_position", velocity)
