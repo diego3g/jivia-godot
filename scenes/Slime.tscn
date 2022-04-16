@@ -1,15 +1,72 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://scenes/Hurtbox.tscn" type="PackedScene" id=1]
 [ext_resource path="res://sprites/slime.png" type="Texture" id=2]
 [ext_resource path="res://scenes/Slime.gd" type="Script" id=3]
+[ext_resource path="res://scenes/Stats.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/PlayerDetectionZone.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/Hitbox.tscn" type="PackedScene" id=6]
 
-[sub_resource type="CapsuleShape2D" id=1]
-radius = 6.0
-height = 6.0
+[sub_resource type="Animation" id=8]
+resource_name = "ChaseLeft"
+length = 1.1
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 7, 8, 9, 10, 11, 12 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
-[sub_resource type="Animation" id=2]
-resource_name = "Idle"
+[sub_resource type="Animation" id=9]
+resource_name = "ChaseRight"
+length = 1.1
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 7, 8, 9, 10, 11, 12 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=10]
+resource_name = "IdleLeft"
 length = 0.7
 loop = true
 tracks/0/type = "value"
@@ -24,13 +81,104 @@ tracks/0/keys = {
 "update": 1,
 "values": [ 0, 1, 2, 3 ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
-[sub_resource type="AnimationNodeAnimation" id=5]
-animation = "Idle"
+[sub_resource type="Animation" id=2]
+resource_name = "IdleRight"
+length = 0.7
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=11]
+animation = "ChaseLeft"
+
+[sub_resource type="AnimationNodeAnimation" id=12]
+animation = "ChaseRight"
+
+[sub_resource type="AnimationNodeAnimation" id=13]
+animation = "ChaseRight"
+
+[sub_resource type="AnimationNodeAnimation" id=14]
+animation = "ChaseLeft"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=15]
+blend_point_0/node = SubResource( 11 )
+blend_point_0/pos = Vector2( -0.1, 0.1 )
+blend_point_1/node = SubResource( 12 )
+blend_point_1/pos = Vector2( 0.1, 0.1 )
+blend_point_2/node = SubResource( 13 )
+blend_point_2/pos = Vector2( 0.1, -0.1 )
+blend_point_3/node = SubResource( 14 )
+blend_point_3/pos = Vector2( -0.1, -0.1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id=16]
+animation = "IdleLeft"
+
+[sub_resource type="AnimationNodeAnimation" id=17]
+animation = "IdleRight"
+
+[sub_resource type="AnimationNodeAnimation" id=18]
+animation = "IdleRight"
+
+[sub_resource type="AnimationNodeAnimation" id=19]
+animation = "IdleLeft"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=20]
+blend_point_0/node = SubResource( 16 )
+blend_point_0/pos = Vector2( -0.1, 0.1 )
+blend_point_1/node = SubResource( 17 )
+blend_point_1/pos = Vector2( 0.1, 0.1 )
+blend_point_2/node = SubResource( 18 )
+blend_point_2/pos = Vector2( 0.1, -0.1 )
+blend_point_3/node = SubResource( 19 )
+blend_point_3/pos = Vector2( -0.1, -0.1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=21]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=22]
 
 [sub_resource type="AnimationNodeStateMachine" id=3]
-states/Idle/node = SubResource( 5 )
-states/Idle/position = Vector2( 317, 88 )
+states/Chase/node = SubResource( 15 )
+states/Chase/position = Vector2( 406, 107.125 )
+states/Idle/node = SubResource( 20 )
+states/Idle/position = Vector2( 206.5, 107 )
+transitions = [ "Idle", "Chase", SubResource( 21 ), "Chase", "Idle", SubResource( 22 ) ]
 start_node = "Idle"
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=4]
@@ -39,15 +187,45 @@ start_node = "Idle"
 radius = 4.0
 height = 8.0
 
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 6.0
+height = 6.0
+
+[sub_resource type="CircleShape2D" id=7]
+radius = 52.0
+
+[sub_resource type="CircleShape2D" id=23]
+radius = 8.0
+
 [node name="Slime" type="KinematicBody2D"]
-collision_layer = 16
+collision_layer = 17
 collision_mask = 3
 script = ExtResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
+flip_h = true
 hframes = 7
 vframes = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/ChaseLeft = SubResource( 8 )
+anims/ChaseRight = SubResource( 9 )
+anims/IdleLeft = SubResource( 10 )
+anims/IdleRight = SubResource( 2 )
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 3 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/playback = SubResource( 4 )
+parameters/Chase/blend_position = Vector2( 0, 0 )
+parameters/Idle/blend_position = Vector2( 0, 0 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 3 )
+rotation = 1.5708
+shape = SubResource( 6 )
 
 [node name="Hurtbox" parent="." instance=ExtResource( 1 )]
 collision_layer = 8
@@ -57,20 +235,25 @@ position = Vector2( 0, 2 )
 rotation = 1.5708
 shape = SubResource( 1 )
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/Idle = SubResource( 2 )
+[node name="Stats" parent="." instance=ExtResource( 4 )]
+max_health = 60
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 3 )
-anim_player = NodePath("../AnimationPlayer")
-active = true
-parameters/playback = SubResource( 4 )
+[node name="PlayerDetectionZone" parent="." instance=ExtResource( 5 )]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 0, 3 )
-rotation = 1.5708
-shape = SubResource( 6 )
+[node name="CollisionShape2D" parent="PlayerDetectionZone" index="0"]
+modulate = Color( 1, 0, 0, 0.282353 )
+shape = SubResource( 7 )
+
+[node name="Hitbox" parent="." instance=ExtResource( 6 )]
+collision_mask = 4
+
+[node name="CollisionShape2D" parent="Hitbox" index="0"]
+position = Vector2( 0, 2 )
+shape = SubResource( 23 )
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_Hurtbox_area_entered"]
+[connection signal="no_health" from="Stats" to="." method="_on_Stats_no_health"]
 
 [editable path="Hurtbox"]
+[editable path="PlayerDetectionZone"]
+[editable path="Hitbox"]

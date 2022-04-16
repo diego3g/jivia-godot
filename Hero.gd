@@ -1,10 +1,11 @@
 extends KinematicBody2D
 
-onready var animation: AnimationPlayer = $AnimationPlayer
-onready var animationTree: AnimationTree = $AnimationTree
+onready var animation: = $AnimationPlayer
+onready var animationTree: = $AnimationTree
 onready var animationState: AnimationNodeStateMachinePlayback = animationTree.get("parameters/playback")
-onready var swordHitbox: Area2D = $SwordHitboxPivot/SwordHitbox
-onready var hero: Sprite = $Sprite
+onready var swordHitbox: = $SwordHitboxPivot/SwordHitbox
+onready var hero: = $Sprite
+onready var stats: = $Stats
 
 enum {
 	MOVE,
@@ -12,8 +13,16 @@ enum {
 }
 
 const speed : = 120
+
 var state : = MOVE
-var velocity = Vector2()
+var velocity: = Vector2()
+var attacked_by: = []
+var is_dead = false
+	
+signal health_changed(value)	
+	
+func _ready():
+	stats.connect("no_health", self, "_on_no_health")
 	
 func get_input():
 	velocity = Vector2()
@@ -31,11 +40,12 @@ func get_input():
 		velocity = velocity.normalized()
 
 func _physics_process(_delta: float):
-	match state:
-		MOVE:
-			move_state()
-		ATTACK:
-			attack_state()
+	if (!is_dead):
+		match state:
+			MOVE:
+				move_state()
+			ATTACK:
+				attack_state()
 	
 func attack_state():
 	velocity = Vector2.ZERO
@@ -66,4 +76,21 @@ func move_state():
 	if Input.is_action_just_pressed("attack"):
 		state = ATTACK
 	
+func _on_no_health():
+	is_dead = true
+	animationState.travel("Death")
+	set_deferred("monitorable", false)
+	
+func _on_attacked(damage: int):
+	if (!is_dead):
+		stats.health -= damage
+		emit_signal("health_changed", stats.health)
+
+func _on_Hurtbox_area_entered(area: Area2D):
+	area.connect("attack", self, "_on_attacked", [area.damage])
+	area.start_attacking()
+	
+func _on_Hurtbox_area_exited(area: Area2D):
+	area.disconnect("attack", self, "_on_attacked")
+	area.stop_attacking()
 

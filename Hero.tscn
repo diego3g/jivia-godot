@@ -1,9 +1,10 @@
-[gd_scene load_steps=35 format=2]
+[gd_scene load_steps=40 format=2]
 
 [ext_resource path="res://sprites/player.png" type="Texture" id=1]
 [ext_resource path="res://Hero.gd" type="Script" id=2]
 [ext_resource path="res://scenes/Hitbox.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/Hitbox.gd" type="Script" id=4]
+[ext_resource path="res://scenes/Stats.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/Hurtbox.tscn" type="PackedScene" id=5]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 4.0
@@ -142,6 +143,22 @@ tracks/4/keys = {
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=45]
+resource_name = "Death"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 24, 25, 26 ]
 }
 
 [sub_resource type="Animation" id=6]
@@ -320,6 +337,9 @@ blend_point_3/node = SubResource( 38 )
 blend_point_3/pos = Vector2( 0.1, -0.1 )
 blend_mode = 1
 
+[sub_resource type="AnimationNodeAnimation" id=46]
+animation = "Death"
+
 [sub_resource type="AnimationNodeAnimation" id=22]
 animation = "Idle_Left"
 
@@ -374,22 +394,30 @@ blend_mode = 1
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=41]
 
+[sub_resource type="AnimationNodeStateMachineTransition" id=47]
+
 [sub_resource type="AnimationNodeStateMachine" id=34]
 states/Attack/node = SubResource( 39 )
 states/Attack/position = Vector2( 349.103, 267.575 )
+states/Death/node = SubResource( 46 )
+states/Death/position = Vector2( 349.051, 25.385 )
 states/Idle/node = SubResource( 26 )
 states/Idle/position = Vector2( 349, 151.5 )
 states/Walk/node = SubResource( 31 )
 states/Walk/position = Vector2( 529, 151.5 )
-transitions = [ "Idle", "Walk", SubResource( 32 ), "Walk", "Idle", SubResource( 33 ), "Idle", "Attack", SubResource( 40 ), "Attack", "Idle", SubResource( 41 ) ]
+transitions = [ "Idle", "Walk", SubResource( 32 ), "Walk", "Idle", SubResource( 33 ), "Idle", "Attack", SubResource( 40 ), "Attack", "Idle", SubResource( 41 ), "Idle", "Death", SubResource( 47 ) ]
 start_node = "Idle"
-graph_offset = Vector2( -121.59, 25.575 )
+graph_offset = Vector2( -34.7401, -38.115 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=21]
 
 [sub_resource type="CapsuleShape2D" id=42]
 radius = 6.0
 height = 4.0
+
+[sub_resource type="CapsuleShape2D" id=44]
+radius = 4.0
+height = 6.0
 
 [node name="Hero" type="KinematicBody2D"]
 collision_layer = 2
@@ -399,7 +427,6 @@ script = ExtResource( 2 )
 position = Vector2( -24, -38 )
 texture = ExtResource( 1 )
 centered = false
-flip_h = true
 hframes = 6
 vframes = 5
 region_rect = Rect2( 0, 0, 60, 110 )
@@ -417,6 +444,7 @@ zoom = Vector2( 2, 2 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Attack_Left = SubResource( 5 )
 anims/Attack_Right = SubResource( 4 )
+anims/Death = SubResource( 45 )
 anims/Idle_Left = SubResource( 6 )
 anims/Idle_Right = SubResource( 3 )
 anims/RESET = SubResource( 43 )
@@ -428,9 +456,9 @@ tree_root = SubResource( 34 )
 anim_player = NodePath("../AnimationPlayer")
 active = true
 parameters/playback = SubResource( 21 )
-parameters/Attack/blend_position = Vector2( 0, 0 )
-parameters/Idle/blend_position = Vector2( 0, 0 )
-parameters/Walk/blend_position = Vector2( 0, 0 )
+parameters/Attack/blend_position = Vector2( 1, 0 )
+parameters/Idle/blend_position = Vector2( 1, 0 )
+parameters/Walk/blend_position = Vector2( 1, 0 )
 
 [node name="SwordHitboxPivot" type="Position2D" parent="."]
 __meta__ = {
@@ -440,11 +468,23 @@ __meta__ = {
 [node name="SwordHitbox" parent="SwordHitboxPivot" instance=ExtResource( 3 )]
 position = Vector2( 10, 0 )
 collision_mask = 8
-script = ExtResource( 4 )
 
 [node name="CollisionShape2D" parent="SwordHitboxPivot/SwordHitbox" index="0"]
 rotation = 1.5708
 shape = SubResource( 42 )
 disabled = true
 
+[node name="Stats" parent="." instance=ExtResource( 4 )]
+
+[node name="Hurtbox" parent="." instance=ExtResource( 5 )]
+collision_layer = 4
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2( 0, -2 )
+shape = SubResource( 44 )
+
+[connection signal="area_entered" from="Hurtbox" to="." method="_on_Hurtbox_area_entered"]
+[connection signal="area_exited" from="Hurtbox" to="." method="_on_Hurtbox_area_exited"]
+
 [editable path="SwordHitboxPivot/SwordHitbox"]
+[editable path="Hurtbox"]
