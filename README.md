@@ -1,37 +1,26 @@
-# Generate autotile
+# Jivia
 
-```
-tool
-extends TileMap
+Jivia is a action RPG created to learn game development.
 
-export (int) var counter = 0
-export (bool) var generate_autotile_collision = false
+This project uses Godot Engine.
 
-var sprite_sheet_size = Vector2(5, 3)
+## Screenshot
 
-func _ready():
-	if Engine.editor_hint:
-		_generate_autotile_collisions()
+![asd](./.github/screenshot.png)
 
+## Features
 
-func _generate_autotile_collisions():
-	for x in sprite_sheet_size.x:
-		for y in sprite_sheet_size.y:
-			var shape = ConvexPolygonShape2D.new()
-			
-			shape.points = [
-				Vector2.ZERO,
-				Vector2(0, 16),
-				Vector2(16, 16),
-				Vector2(16, 0)
-			]
-			
-			tile_set.tile_add_shape(
-				0, 
-				shape,
-				Transform2D(0.0, Vector2.ZERO),
-				false,
-				Vector2(x, y)
-			)
-
-```
+- [x] Avoid obstacles (collision)
+- [x] Animation on walk/idle
+- [x] Attack with animation
+- [x] Player & monster stats
+- [x] Monsters tries to reach the player
+- [x] Monsters attacks
+- [x] Player dies
+- [x] UI bars
+- [ ] Monsters wander around when player's near
+- [ ] A-Star algorithm when monsters trying to reach the player
+- [ ] A cool map
+- [ ] Animation on attack
+- [ ] Stats bars on monsters
+- [ ] Ranged monsters and weapons
